@@ -57,7 +57,8 @@ where
     /// Return the filename of the field (if present or error)
     pub fn filename<'a>(&'a self) -> Result<&'a str, MultipartError> {
         if let Some(val) = self.headers.get("content-disposition") {
-            let string_val = val.to_str().map_err(|_| MultipartError::InvalidHeader)?;
+            let string_val =
+                std::str::from_utf8(val.as_bytes()).map_err(|_| MultipartError::InvalidHeader)?;
             if let Some(filename) = get_dispo_param(&string_val, "filename") {
                 return Ok(filename);
             }
@@ -69,7 +70,8 @@ where
     /// Return the name of the field (if present or error)
     pub fn name<'a>(&'a self) -> Result<&'a str, MultipartError> {
         if let Some(val) = self.headers.get("content-disposition") {
-            let string_val = val.to_str().map_err(|_| MultipartError::InvalidHeader)?;
+            let string_val =
+                std::str::from_utf8(val.as_bytes()).map_err(|_| MultipartError::InvalidHeader)?;
             if let Some(filename) = get_dispo_param(&string_val, "name") {
                 return Ok(filename);
             }
